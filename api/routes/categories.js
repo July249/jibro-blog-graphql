@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
   }
 }); */
 
-// GET CATEGORY
+// GET ALL CATEGORY
 router.get('/', async (req, res) => {
   try {
     const cats = await Category.find();

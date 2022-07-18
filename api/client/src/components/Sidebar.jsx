@@ -4,7 +4,7 @@ import { axiosInstance } from '../config';
 
 const Sidebar = () => {
   const [cats, setCats] = useState([]);
-  const PF = 'https://jibro-blog.herokuapp.com/images/';
+  const PF = 'http://localhost:5000/api/images/';
 
   useEffect(() => {
     const getCats = async () => {

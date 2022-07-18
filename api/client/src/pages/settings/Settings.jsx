@@ -5,7 +5,7 @@ import { axiosInstance } from '../../config';
 import './settings.css';
 
 const Settings = () => {
-  const PF = 'https://jibro-blog.herokuapp.com/images/';
+  const PF = 'http://localhost:5000/api/images/';
 
   const [file, setFile] = useState(null);
   const [username, setUsername] = useState('');

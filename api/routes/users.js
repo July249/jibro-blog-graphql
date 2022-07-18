@@ -1,4 +1,27 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
+const usersController = require('../controllers/usersController');
+const ROLES_LIST = require('../config/roleList');
+const verifyRoles = require('../middleware/verifyRoles');
+
+router
+  .route('/')
+  .get(usersController.getAllEmployees)
+  .post(
+    verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor),
+    usersController.createNewUser
+  )
+  .put(
+    verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor),
+    usersController.updateUser
+  )
+  .delete(verifyRoles(ROLES_LIST.Admin), usersController.deleteUser);
+
+router.route('/:id').get(usersController.getUser);
+
+module.exports = router;
+
+/* const router = require('express').Router();
 const User = require('../models/User');
 const Post = require('../models/Post');
 const bcrypt = require('bcrypt');
@@ -58,4 +81,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router; */

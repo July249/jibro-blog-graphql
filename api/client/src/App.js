@@ -9,21 +9,23 @@ import Login from './pages/login/Login';
 import Register from './pages/register/Register';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useContext } from 'react';
-import { Context } from './context/Context';
+// import { useContext } from 'react';
+// import { Context } from './context/Context';
 
 function App() {
-  const { user } = useContext(Context);
+  // const { user } = useContext(Context);
   return (
     <Router>
       <TopBar />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/register" element={user ? <Homepage /> : <Register />} />
+        {/* <Route path="/register" element={user ? <Homepage /> : <Register />} /> */}
+        <Route path="/register" element={<Register />} />
         <Route path="/about" element={<About />} />
-        <Route path="/login" element={user ? <Homepage /> : <Login />} />
-        <Route path="/write" element={user ? <Write /> : <Login />} />
-        <Route path="/settings" element={user ? <Settings /> : <Login />} />
+        {/* <Route path="/login" element={user ? <Homepage /> : <Login />} /> */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/write" element={<Write />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/post/:postId" element={<Single />} />
         {/* <Route path="/posts" element={<Article />} /> */}
       </Routes>

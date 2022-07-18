@@ -3,7 +3,7 @@ import { Context } from '../context/Context';
 import { useNavigate, Link } from 'react-router-dom';
 
 const TopBar = () => {
-  const PF = 'https://jibro-blog.herokuapp.com/images/';
+  const PF = 'http://localhost:5000/api/images/';
 
   const { user, dispatch } = useContext(Context);
 
