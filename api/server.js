@@ -4,8 +4,6 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const corsOptions = require('../api/config/corsOptions');
-const { logger } = require('./middleware/logEvents');
-const errorHandler = require('./middleware/errorHandler');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
@@ -15,9 +13,6 @@ const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
-
-// custom middleware logger
-app.use(logger);
 
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
@@ -37,17 +32,24 @@ app.use(cookieParser());
 
 // serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
+app.use('/images', express.static(path.join(__dirname)));
 /* app.use('/', express.static(path.join(__dirname, '/client/build'))); */
+/* app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/build', 'index.html'));
+}); */
 
 // routes
-app.use('/', require('./routes/root'));
-app.use('/register', require('./routes/register'));
-app.use('/auth', require('./routes/auth'));
-app.use('/refresh', require('./routes/refresh'));
-app.use('/logout', require('./routes/logout'));
+app.use('/api/upload', require('./routes/upload'));
+
+app.use('/api/register', require('./routes/register'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/refresh', require('./routes/refresh'));
+app.use('/api/logout', require('./routes/logout'));
 
 app.use(verifyJWT);
-app.use('/users', require('./routes/users'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/posts', require('./routes/posts'));
+app.use('/api/categories', require('./routes/categories'));
 
 // 404 Error status
 app.all('*', (req, res) => {
@@ -61,41 +63,7 @@ app.all('*', (req, res) => {
   }
 });
 
-// errorHandler
-app.use(errorHandler);
-
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');
   app.listen(PORT, () => console.log(`Backend is running on port ${PORT}`));
 });
-
-/* // Upload File Rest.API
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, 'images');
-  },
-  filename: (req, file, callback) => {
-    callback(null, req.body.name);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-app.post('/api/images', upload.single('file'), (req, res) => {
-  res.status(200).json('File has been uploaded');
-});
-
-app.use('/api/auth', authRoute);
-app.use('/api/users', userRoute);
-app.use('/api/posts', postRoute);
-app.use('/api/categories', categoryRoute);
-
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/client/build', 'index.html'));
-});
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log('Backend is running.');
-});
- */

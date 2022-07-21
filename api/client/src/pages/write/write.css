@@ -49,6 +49,17 @@
   height: 100vh;
 }
 
+.writeSelectCat {
+  position: absolute;
+  top: 20px;
+  right: 130px;
+  color: black;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
 .writeSubmit {
   position: absolute;
   top: 20px;

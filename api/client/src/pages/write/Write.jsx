@@ -36,7 +36,7 @@ const Write = ({ category }) => {
       data.append('file', file);
       newPost.photo = filename;
       try {
-        await axiosInstance.post('/upload', data);
+        await axiosInstance.post('/images', data);
       } catch (err) {}
     }
     try {
@@ -55,12 +55,15 @@ const Write = ({ category }) => {
           <label htmlFor="fileInput">
             <i className="writeIcon fa-solid fa-plus"></i>
           </label>
-          <input
-            type="file"
-            id="fileInput"
-            style={{ display: 'none' }}
-            onChange={(e) => setFile(e.target.files[0])}
-          />
+          <form action="/images" method="POST" encType="multipart/form-data">
+            <input
+              name="image"
+              type="file"
+              id="fileInput"
+              style={{ display: 'none' }}
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+          </form>
           <input
             className="writeInput"
             type="text"
@@ -78,6 +81,7 @@ const Write = ({ category }) => {
           ></textarea>
         </div>
         <select className="writeSelectCat">
+          <option value="">--Category--</option>
           {cats.map((c) => (
             <option
               key={c._id}

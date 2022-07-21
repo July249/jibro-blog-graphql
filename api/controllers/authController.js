@@ -1,27 +1,23 @@
-const usersDB = {
-  users: require('../models/User'),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
-
 const jwt = require('jsonwebtoken');
-const fsPromises = require('fs').promises;
-const path = require('path');
 
 const handleLogin = async (req, res) => {
-  const { user, pwd } = req.body;
-  if (!user || !pwd)
+  const { username, password } = req.body;
+  if (!username || !password)
     return res
       .status(400)
       .json({ message: 'Username and password are required.' });
-  const foundUser = usersDB.users.find((person) => person.username === user);
+
+  // find User in the DB
+  const foundUser = await User.findOne({ username }).exec();
   if (!foundUser) return res.sendStatus(401); // Unauthorized
+
   // evaluate password
-  const match = await bcrypt.compare(pwd, foundUser.password);
+  const match = await bcrypt.compare(password, foundUser.password);
   if (match) {
     const roles = Object.values(foundUser.roles);
+
     // create JWTs
     const accessToken = jwt.sign(
       {
@@ -38,20 +34,16 @@ const handleLogin = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: '1d' }
     );
+
     // Saving refreshToken with current user
-    const otherUsers = usersDB.users.filter(
-      (person) => person.username !== foundUser.username
-    );
-    const currentUser = { ...foundUser, refreshToken };
-    usersDB.setUsers([...otherUsers, currentUser]);
-    await fsPromises.writeFile(
-      path.join(__dirname, '..', 'models', 'User'),
-      JSON.stringify(usersDB.users)
-    );
+    foundUser.refreshToken = refreshToken;
+    const result = await foundUser.save();
+    console.log(result);
+
     res.cookie('jwt', refreshToken, {
       httpOnly: true,
       sameSite: 'None',
-      secure: true,
+      /* secure: true, */
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.json({ accessToken });

@@ -16,19 +16,20 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    roles: {
-      type: Object,
-      required: true,
-    },
-    refreshToken: {
-      type: string,
-      required: true,
-      unique: true,
-    },
     profilePic: {
       type: String,
-      default: '',
+      default:
+        'https://images.pexels.com/photos/7137432/pexels-photo-7137432.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     },
+    roles: {
+      User: {
+        type: Number,
+        default: 2001,
+      },
+      Editor: Number,
+      Admin: Number,
+    },
+    refreshToken: String,
   },
   { timestamps: true }
 );

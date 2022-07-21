@@ -1,78 +1,62 @@
-const data = {
-  users: require('../models/User'),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
+const User = require('../models/User');
 
-const getAllUsers = (req, res) => {
-  res.json(data.users);
-};
+// GET USER
+const getUser = async (req, res) => {
+  if (!req?.params?.id)
+    return res.status(400).json({ message: 'User ID required.' });
 
-const createNewUser = (req, res) => {
-  const newUser = {
-    id: data.users[data.users.length - 1].id + 1 || 1,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-  };
-
-  if (!newUser.firstname || !newUser.lastname) {
-    return res
-      .status(400)
-      .json({ message: 'First and last names are required.' });
-  }
-
-  data.setUsers([...data.users, newUser]);
-  res.json(data.users);
-};
-
-const updateUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.body.id));
+  const user = await User.findOne({ _id: req.params.id }).exec();
   if (!user) {
     return res
-      .status(400)
-      .json({ message: `User ID ${req.body.id} not found` });
-  }
-  if (req.body.firstname) user.firstname = req.body.firstname;
-  if (req.body.lastname) user.lastname = req.body.lastname;
-  const filteredArray = data.users.filter(
-    (user) => user.id !== parseInt(req.body.id)
-  );
-  const unsortedArray = [...filteredArray, user];
-  data.setUsers(
-    unsortedArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
-  );
-  res.json(data.users);
-};
-
-const deleteUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.body.id));
-  if (!user) {
-    return res
-      .status(400)
-      .json({ message: `User ID ${req.body.id} not found` });
-  }
-  const filteredArray = data.users.filter(
-    (user) => user.id !== parseInt(req.body.id)
-  );
-  data.setUsers([...filteredArray]);
-  res.json(data.users);
-};
-
-const getUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.params.id));
-  if (!user) {
-    return res
-      .status(400)
-      .json({ message: `User ID ${req.params.id} not found` });
+      .status(204)
+      .json({ message: `No user matches ID ${req.params.id}.` });
   }
   res.json(user);
 };
 
+// UPDATE USER
+const updateUser = async (req, res) => {
+  if (!req?.body?.id) {
+    return res.status(400).json({ message: 'ID parameter is required.' });
+  }
+
+  const user = await User.findOne({ _id: req.body.id }).exec();
+  if (!user) {
+    return res
+      .status(204)
+      .json({ message: `No user matches ID ${req.body.id}.` });
+  }
+  if (req.body?.username) user.username = req.body.username;
+  if (req.body?.email) user.email = req.body.email;
+  const result = await user.save();
+  res.json(result);
+};
+
+// DELETE USER
+const deleteUser = async (req, res) => {
+  if (!req?.body?.id)
+    return res.status(400).json({ message: 'User ID required.' });
+
+  const user = await user.findOne({ _id: req.body.id }).exec();
+  if (!user) {
+    return res
+      .status(204)
+      .json({ message: `No user matches ID ${req.body.id}.` });
+  }
+  const result = await user.deleteOne({ _id: req.body.id });
+  res.json(result);
+};
+
+// GET ALL USERS
+const getAllUsers = async (req, res) => {
+  const users = await User.find();
+  if (!users) return res.status(204).json({ message: 'No users found.' });
+  res.json(users);
+};
+
 module.exports = {
-  getAllUsers,
-  createNewUser,
+  getUser,
   updateUser,
   deleteUser,
-  getUser,
+  getAllUsers,
 };

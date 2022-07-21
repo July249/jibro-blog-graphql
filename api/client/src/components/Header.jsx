@@ -3,7 +3,7 @@ const Header = () => {
     <>
       <div className="header">
         <div className="headerTitles">
-          <span className="headerTitleSm">Jibro's Blog</span>
+          <span className="headerTitleSm">Jibro's Blog in Local</span>
           <span className="headerTitleLg">Welcome!</span>
         </div>
         <img
